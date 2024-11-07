@@ -12,7 +12,9 @@ function updateClicks() {
         const letter = letterSequence[currentLetterIndex];
         document.getElementById("message").innerText = `Congratulations! You've unlocked: ${letter}`;
         currentLetterIndex++;
-        
+    }
+}
+
 // Event listener for the "Tap the Rock" button
 document.getElementById("rock").addEventListener("click", updateClicks);
 
