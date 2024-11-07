@@ -1,30 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tap-to-Play Game</title>
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tap the Rock Game</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="container">
-    <h1>Tap the Rock Game</h1>
-    <button id="login-button">Login with Phantom</button>
-    <div id="game">
-      <button id="rock" disabled>Tap the Rock!</button>
-      <p>Click Count: <span id="click-count">0</span></p>
-      <p>Letters Revealed: <span id="letters">---</span></p>
+    <div class="container">
+        <h1>Tap the Rock Game</h1>
+        <div id="clicks">Clicks: 0</div>
+        <button id="rock">Tap the Rock!</button>
+        <div id="message"></div>
+        <button id="login-button">Login with Phantom</button>
+        <div id="leaderboard">
+            <h2>Leaderboard</h2>
+            <ul id="leaderboard-list"></ul>
+        </div>
     </div>
-    <h2>Leaderboard</h2>
-    <ul id="leaderboard"></ul>
-  </div>
 
-  <!-- Firebase SDKs -->
-  <script src="https://www.gstatic.com/firebasejs/9.1.2/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.1.2/firebase-database.js"></script>
-  <!-- Solana Web3 SDK -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/@solana/web3.js/1.37.0/solana-web3.min.js"></script>
-  <!-- Custom Script -->
-  <script src="script.js"></script>
+    <!-- Correct Solana Web3.js Version -->
+    <script src="https://unpkg.com/@solana/web3.js@1.73.0/lib/index.iife.min.js"></script>
+
+    <script src="script.js"></script>
 </body>
 </html>
