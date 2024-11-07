@@ -1,80 +1,91 @@
-// Firebase setup (replace with your Firebase config)
+/// Connect to Phantom wallet and handle clicks
+let clicks = 0;
+let publicKey = null;
+let leaderboard = [];  // For tracking leaderboard
+
+// Initialize Firebase (you'll replace this with your actual Firebase config)
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_AUTH_DOMAIN",
-  databaseURL: "YOUR_DATABASE_URL",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_STORAGE_BUCKET",
-  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-  appId: "YOUR_APP_ID"
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_AUTH_DOMAIN",
+    databaseURL: "YOUR_DATABASE_URL",
+    projectId: "YOUR_PROJECT_ID",
+    storageBucket: "YOUR_STORAGE_BUCKET",
+    messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+    appId: "YOUR_APP_ID"
 };
 
-firebase.initializeApp(firebaseConfig);
-const db = firebase.database();
+const app = firebase.initializeApp(firebaseConfig);
+const database = firebase.database();
 
-let publicKey = null;
-let clickCount = 0;
-let lettersRevealed = "";
-
-// Initialize click data and setup listeners
-async function initializeGame() {
-  document.getElementById("rock").disabled = false;
-  document.getElementById("rock").addEventListener("click", handleClick);
-  await updateLeaderboard();
-}
-
+// Connect to Phantom wallet
 async function connectWallet() {
-  try {
     const provider = window.solana;
-    if (provider.isPhantom) {
-      const response = await provider.connect();
-      publicKey = response.publicKey.toString();
-      document.getElementById("login-button").style.display = "none";
-      initializeGame();
+    if (provider && provider.isPhantom) {
+        try {
+            const response = await provider.connect(); // Request connection
+            publicKey = response.publicKey.toString(); // Save the public key
+            document.getElementById("login-button").style.display = "none"; // Hide login button
+            document.getElementById("rock").disabled = false; // Enable the rock button
+        } catch (error) {
+            console.error("Wallet connection failed:", error);
+        }
     } else {
-      alert("Phantom Wallet not found!");
+        alert("Phantom Wallet not found!");
     }
-  } catch (error) {
-    console.error("Wallet connection failed:", error);
-  }
 }
 
-// Handle clicks, track, and store in Firebase
-async function handleClick() {
-  clickCount++;
-  document.getElementById("click-count").innerText = clickCount;
+// Track click count and leaderboard updates
+function handleClick() {
+    if (!publicKey) {
+        alert("Please connect your wallet first!");
+        return;
+    }
 
-  // Reveal letters every 1000 clicks
-  const letters = ["E", "N", "I", "E"];
-  const letterIndex = Math.floor(clickCount / 1000) - 1;
-  if (clickCount % 1000 === 0 && letterIndex < letters.length) {
-    lettersRevealed += letters[letterIndex];
-    document.getElementById("letters").innerText = lettersRevealed;
-  }
+    clicks += 1;
+    document.getElementById("clicks").innerText = `Clicks: ${clicks}`;
 
-  // Update click count in Firebase
-  if (publicKey) {
-    await db.ref("players/" + publicKey).set({
-      clicks: clickCount,
+    // Handle letter progression
+    const letters = ['E', 'N', 'I', 'E'];
+    const index = Math.floor(clicks / 1000);
+    if (index < letters.length) {
+        document.getElementById("message").innerText = `Next Letter: ${letters[index]}`;
+    }
+
+    // Update Firebase with the new click count for the user
+    firebase.database().ref('players/' + publicKey).set({
+        clicks: clicks
     });
-    await updateLeaderboard();
-  }
+
+    // Update leaderboard
+    updateLeaderboard();
 }
 
-// Fetch and display the leaderboard
-async function updateLeaderboard() {
-  const snapshot = await db.ref("players").orderByChild("clicks").limitToLast(10).get();
-  const leaderboard = [];
-  snapshot.forEach(player => {
-    leaderboard.push({ publicKey: player.key, clicks: player.val().clicks });
-  });
-  leaderboard.sort((a, b) => b.clicks - a.clicks);
+// Fetch leaderboard from Firebase and update UI
+function updateLeaderboard() {
+    firebase.database().ref('players').orderByChild('clicks').limitToLast(10).once('value').then(snapshot => {
+        leaderboard = [];
+        snapshot.forEach(childSnapshot => {
+            const player = childSnapshot.val();
+            const playerEntry = {
+                publicKey: childSnapshot.key,
+                clicks: player.clicks
+            };
+            leaderboard.push(playerEntry);
+        });
+        leaderboard.sort((a, b) => b.clicks - a.clicks); // Sort leaderboard by clicks
 
-  // Update leaderboard display
-  const leaderboardElement = document.getElementById("leaderboard");
-  leaderboardElement.innerHTML = leaderboard
-    .map((player, index) => `<li>#${index + 1} - ${player.publicKey}: ${player.clicks} clicks</li>`)
-    .join("");
+        // Display leaderboard
+        const leaderboardList = document.getElementById("leaderboard-list");
+        leaderboardList.innerHTML = ''; // Clear current leaderboard
+        leaderboard.forEach(entry => {
+            const li = document.createElement("li");
+            li.textContent = `${entry.publicKey}: ${entry.clicks} clicks`;
+            leaderboardList.appendChild(li);
+        });
+    });
 }
 
+// Add event listeners
 document.getElementById("login-button").addEventListener("click", connectWallet);
+document.getElementById("rock").addEventListener("click", handleClick);
+document.getElementById("rock").disabled = true; // Initially disable the rock button until wallet is connected
