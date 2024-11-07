@@ -21,18 +21,17 @@ document.getElementById("rock").addEventListener("click", updateClicks);
 // Function to connect to Phantom Wallet
 async function connectPhantom() {
     if (window.solana && window.solana.isPhantom) {
-        const wallet = window.solana;
         try {
-            await wallet.connect();
-            const publicKey = wallet.publicKey.toString();
+            await window.solana.connect();
+            const publicKey = window.solana.publicKey.toString();
             console.log("Connected with public key:", publicKey);
-            document.getElementById('message').innerText = 'Connected with Phantom wallet!';
-            document.getElementById('login-button').style.display = 'none';
+            document.getElementById("message").innerText = `Connected with Phantom wallet: ${publicKey}`;
+            document.getElementById("login-button").style.display = "none";
         } catch (err) {
-            console.error('Failed to connect:', err);
+            console.error("Failed to connect:", err);
         }
     } else {
-        alert('Phantom wallet not found. Please install Phantom to connect.');
+        alert("Phantom wallet not found. Please install Phantom to connect.");
     }
 }
 
