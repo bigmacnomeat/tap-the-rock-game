@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Global Countdown</title>
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div id="countdown-container">
@@ -12,68 +12,7 @@
     <p id="countdown">Loading countdown...</p>
   </div>
 
-  <!-- Firebase SDK -->
-  <script type="module">
-    // Import the functions you need from Firebase SDK
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-    import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-analytics.js";
-    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js"; // Import Firestore SDK
-
-    // Firebase configuration
-    const firebaseConfig = {
-      apiKey: "AIzaSyDscMKsp0HDin4CaNNjGL-XJ_LhWIUUTGE",
-      authDomain: "miners-f274c.firebaseapp.com",
-      projectId: "miners-f274c",
-      storageBucket: "miners-f274c.firebasestorage.app",
-      messagingSenderId: "327650804954",
-      appId: "1:327650804954:web:97225d969e840338e991e3",
-      measurementId: "G-4RFD09Z0NT"
-    };
-
-    // Initialize Firebase
-    const app = initializeApp(firebaseConfig);
-    const analytics = getAnalytics(app);
-    const db = getFirestore(app); // Initialize Firestore
-
-    // Reference to the countdown document in Firestore
-    const countdownRef = doc(db, "countdowns", "global-countdown");
-
-    // Function to load the countdown data from Firestore
-    async function loadCountdown() {
-      try {
-        const docSnap = await getDoc(countdownRef);
-        if (docSnap.exists()) {
-          const endTime = docSnap.data().endTime.toDate(); // Convert Firestore timestamp to Date
-          startCountdown(endTime);
-        } else {
-          document.getElementById("countdown").innerText = "No countdown data found in Firestore.";
-        }
-      } catch (error) {
-        console.error("Error loading countdown: ", error);
-        document.getElementById("countdown").innerText = "Error loading countdown.";
-      }
-    }
-
-    // Function to start the countdown
-    function startCountdown(endTime) {
-      const countdownElement = document.getElementById("countdown");
-      const interval = setInterval(() => {
-        const now = new Date();
-        const timeRemaining = endTime - now;
-
-        if (timeRemaining <= 0) {
-          clearInterval(interval); // Stop the countdown when it reaches zero
-          countdownElement.innerText = "Countdown Finished!";
-        } else {
-          const minutes = Math.floor(timeRemaining / 1000 / 60);
-          const seconds = Math.floor((timeRemaining / 1000) % 60);
-          countdownElement.innerText = `Time remaining: ${minutes}m ${seconds}s`;
-        }
-      }, 1000);
-    }
-
-    // Load the countdown data
-    loadCountdown();
-  </script>
+  <!-- Firebase SDK and Script -->
+  <script type="module" src="script.js"></script>
 </body>
 </html>
