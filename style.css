@@ -1,43 +1,76 @@
-/* General styles */
+/* Basic reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
 body {
     font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    text-align: center;
     padding: 20px;
-    background-color: #f5f5f5;
 }
 
 h2 {
-    font-size: 1.5rem;
+    margin-bottom: 20px;
+}
+
+#timer {
+    font-size: 24px;
+    font-weight: bold;
+    margin: 20px 0;
+    color: #333;
 }
 
 #rock {
-    margin-top: 20px;
-    padding: 20px;
+    background-color: #008CBA;
+    color: white;
+    padding: 10px 20px;
+    font-size: 20px;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+}
+
+#rock:hover {
+    background-color: #005f73;
+}
+
+#clicks {
+    font-size: 18px;
+    margin: 10px 0;
+}
+
+#login-button {
     background-color: #4CAF50;
     color: white;
-    text-align: center;
-    font-size: 1.5rem;
+    padding: 10px 20px;
+    font-size: 16px;
     cursor: pointer;
+    border: none;
+    border-radius: 5px;
 }
 
-#clicks, #message, #login-button {
+#login-button:hover {
+    background-color: #45a049;
+}
+
+#message {
     margin-top: 10px;
+    font-size: 16px;
 }
 
-/* Countdown position */
-.countdown {
-    position: fixed;
-    top: 10px;
-    right: 10px;
-    font-size: 1.2rem;
-    font-weight: bold;
-    color: #ff0000;
-}
-
-/* Leaderboard styling */
 .leaderboard-section {
-    margin-top: 40px;
+    margin-top: 30px;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
 #leaderboard-list {
     margin-top: 10px;
+    font-size: 16px;
+    color: #333;
 }
