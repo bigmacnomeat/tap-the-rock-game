@@ -4,12 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tap-the-Rock Game</title>
-    <link rel="stylesheet" href="style.css"> <!-- Link to external CSS file -->
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <h1>Welcome to Tap-the-Rock Game</h1>
 
-    <!-- Display the click count -->
+    <!-- Display Click Count -->
     <div id="clicks">Clicks: 0</div>
 
     <!-- Button to simulate rock clicking -->
@@ -19,13 +19,17 @@
     <button id="login-button">Connect Phantom Wallet</button>
 
     <!-- Display Leaderboard -->
+    <h2>Leaderboard</h2>
     <ul id="leaderboard"></ul>
 
+    <!-- Display Countdown -->
+    <h2>Countdown</h2>
+    <div id="countdown">Loading countdown...</div>
+
     <!-- Message for Phantom wallet connection -->
-    <div id="message"></div> <!-- Display the connection message -->
+    <div id="message"></div>
 
     <!-- Firebase and App Script -->
-    <script type="module" src="script.js"></script> <!-- Link to external JavaScript file -->
+    <script type="module" src="script.js"></script>
 </body>
 </html>
-
