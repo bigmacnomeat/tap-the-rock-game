@@ -1,60 +1,113 @@
-// Import the functions you need from the Firebase SDK
+// Import Firebase SDK
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-analytics.js";
-import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js"; // Import Firestore SDK
+import { getFirestore, doc, setDoc, getDoc, getDocs, collection } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
-// Your web app's Firebase configuration
+// Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyDscMKsp0HDin4CaNNjGL-XJ_LhWIUUTGE",
-  authDomain: "miners-f274c.firebaseapp.com",
-  projectId: "miners-f274c",
-  storageBucket: "miners-f274c.firebasestorage.app",
-  messagingSenderId: "327650804954",
-  appId: "1:327650804954:web:97225d969e840338e991e3",
-  measurementId: "G-4RFD09Z0NT"
+    apiKey: "AIzaSyDscMKsp0HDin4CaNNjGL-XJ_LhWIUUTGE",
+    authDomain: "miners-f274c.firebaseapp.com",
+    projectId: "miners-f274c",
+    storageBucket: "miners-f274c.firebasestorage.app",
+    messagingSenderId: "327650804954",
+    appId: "1:327650804954:web:97225d969e840338e991e3"
 };
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
-const db = getFirestore(app); // Initialize Firestore
+const db = getFirestore(app);
 
-// Reference to the countdown document in Firestore
-const countdownRef = doc(db, "countdowns", "global-countdown");
+// Variables for tracking clicks
+let clickCount = 0;
 
-// Function to load the countdown data from Firestore
-async function loadCountdown() {
-  try {
-    const docSnap = await getDoc(countdownRef);
-    if (docSnap.exists()) {
-      const endTime = docSnap.data().endTime.toDate(); // Convert Firestore timestamp to Date
-      startCountdown(endTime);
+// Function to connect Phantom Wallet and store data in Firestore
+async function connectPhantom() {
+    if (window.solana && window.solana.isPhantom) {
+        try {
+            await window.solana.connect();
+            const publicKey = window.solana.publicKey.toString();
+            document.getElementById("message").innerText = `Connected with Phantom wallet: ${publicKey}`;
+
+            const userDoc = await getDoc(doc(db, "leaderboard", publicKey));
+            if (userDoc.exists()) {
+                clickCount = userDoc.data().clicks;
+                document.getElementById("clicks").innerText = `Clicks: ${clickCount}`;
+            } else {
+                clickCount = 0;
+                document.getElementById("clicks").innerText = `Clicks: ${clickCount}`;
+                await setDoc(doc(db, "leaderboard", publicKey), { walletAddress: publicKey, clicks: clickCount });
+            }
+
+            document.getElementById("login-button").style.display = "none";
+            fetchLeaderboard();
+        } catch (err) {
+            console.error("Failed to connect:", err);
+        }
     } else {
-      document.getElementById("countdown").innerText = "No countdown data found in Firestore.";
+        alert("Phantom wallet not found. Please install Phantom to connect.");
     }
-  } catch (error) {
-    console.error("Error loading countdown: ", error);
-    document.getElementById("countdown").innerText = "Error loading countdown.";
-  }
 }
 
-// Function to start the countdown
-function startCountdown(endTime) {
-  const countdownElement = document.getElementById("countdown");
-  const interval = setInterval(() => {
-    const now = new Date();
-    const timeRemaining = endTime - now;
-
-    if (timeRemaining <= 0) {
-      clearInterval(interval); // Stop the countdown when it reaches zero
-      countdownElement.innerText = "Countdown Finished!";
-    } else {
-      const minutes = Math.floor(timeRemaining / 1000 / 60);
-      const seconds = Math.floor((timeRemaining / 1000) % 60);
-      countdownElement.innerText = `Time remaining: ${minutes}m ${seconds}s`;
+// Function to update clicks in Firestore
+async function updateClicks() {
+    clickCount++;
+    document.getElementById("clicks").innerText = `Clicks: ${clickCount}`;
+    try {
+        await setDoc(doc(db, "leaderboard", window.solana.publicKey.toString()), { clicks: clickCount }, { merge: true });
+    } catch (err) {
+        console.error("Error updating clicks in Firestore:", err);
     }
-  }, 1000);
 }
 
-// Load the countdown data
-loadCountdown();
+// Function to fetch and display the leaderboard
+async function fetchLeaderboard() {
+    try {
+        const querySnapshot = await getDocs(collection(db, "leaderboard"));
+        const leaderboard = [];
+        querySnapshot.forEach((doc) => {
+            const data = doc.data();
+            leaderboard.push({ walletAddress: data.walletAddress, clicks: data.clicks });
+        });
+        leaderboard.sort((a, b) => b.clicks - a.clicks);
+
+        const leaderboardElement = document.getElementById("leaderboard");
+        leaderboardElement.innerHTML = '';
+        leaderboard.forEach((user, index) => {
+            const listItem = document.createElement("li");
+            listItem.innerText = `${index + 1}. Wallet: ${user.walletAddress} - Clicks: ${user.clicks}`;
+            leaderboardElement.appendChild(listItem);
+        });
+    } catch (error) {
+        console.error("Error fetching leaderboard data:", error);
+    }
+}
+
+// Event listener for the rock click
+document.getElementById("rock").addEventListener("click", updateClicks);
+
+// Event listener for the login button
+document.getElementById("login-button").addEventListener("click", connectPhantom);
+
+// Countdown Timer Logic
+const countdownTarget = new Date("December 24, 2024 15:00:00").getTime();
+const countdownElement = document.getElementById("countdown");
+
+function updateCountdown() {
+    const now = new Date().getTime();
+    const distance = countdownTarget - now;
+
+    if (distance <= 0) {
+        countdownElement.innerHTML = "The event has started!";
+    } else {
+        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        countdownElement.innerHTML = `Time left: ${days}d ${hours}h ${minutes}m`;
+    }
+}
+
+// Update countdown every minute
+setInterval(updateCountdown, 60000);
+updateCountdown();  // Initial call to display immediately
+
+// Fetch and display leaderboard on page load
+window.onload = fetchLeaderboard;
