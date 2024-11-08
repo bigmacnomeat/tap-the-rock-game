@@ -3,22 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Click Game with Countdown</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Tap-to-Play Game</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="countdown" id="timer"></div>
-    
-    <div class="leaderboard-section">
-        <h2>Leaderboard</h2>
-        <div id="leaderboard-list"></div>
+    <div id="game-container">
+        <h1>Tap the Rock!</h1>
+        <div id="message">Click to connect your wallet and start playing!</div>
+        <div id="clicks">Clicks: 0</div>
+        <button id="login-button">Connect Phantom Wallet</button>
+        <button id="rock">Tap Rock!</button>
     </div>
 
-    <button id="login-button">Connect Phantom Wallet</button>
-    <div id="message"></div>
-    <div id="clicks">Clicks: 0</div>
-    
-    <div id="rock">Click me!</div>
+    <!-- Leaderboard Section -->
+    <div id="leaderboard-container">
+        <h2>Leaderboard</h2>
+        <ul id="leaderboard">
+            <!-- Leaderboard will be populated here -->
+        </ul>
+    </div>
+
+    <!-- Solana Web3.js Library -->
+    <script src="https://unpkg.com/@solana/web3.js@1.73.0/lib/index.iife.min.js"></script>
 
     <!-- Firebase SDK -->
     <script type="module" src="script.js"></script>
