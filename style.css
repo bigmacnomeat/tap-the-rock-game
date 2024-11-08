@@ -1,114 +1,76 @@
-/* Basic Reset */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
+/* General styles */
 body {
-    font-family: 'Arial', sans-serif;
-    background-color: #f8f8f8;
-    color: #333;
+    font-family: Arial, sans-serif;
+    background-color: #f5f5f5;
     display: flex;
-    justify-content: center;
+    flex-direction: column;
     align-items: center;
-    height: 100vh;
     padding: 20px;
+    color: #333;
 }
 
-/* Container to center the content */
-.container {
+/* Container for messages and stats */
+#message, #clicks, #countdown-display {
+    font-size: 18px;
+    margin: 10px 0;
+    padding: 10px;
     background-color: #fff;
-    border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    padding: 30px;
+    border-radius: 8px;
     width: 100%;
-    max-width: 500px;
+    max-width: 400px;
     text-align: center;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* Header Section */
-h1 {
-    font-size: 2.5rem;
-    color: #2a2a2a;
-    margin-bottom: 20px;
-}
-
-/* Countdown Timer */
-.countdown-container h2 {
-    font-size: 1.5rem;
-    color: #2a2a2a;
-}
-
-#countdown {
-    font-size: 2rem;
-    color: #e74c3c;
+/* Countdown display styles */
+#countdown-display {
     font-weight: bold;
+    color: #d9534f; /* Red color for emphasis */
 }
 
-/* Wallet Connection */
-.wallet-connection {
-    margin-top: 20px;
+/* Button styles */
+button {
+    padding: 10px 20px;
+    margin: 10px;
+    font-size: 16px;
+    color: #fff;
+    background-color: #007bff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #0056b3;
 }
 
 #login-button {
-    padding: 10px 20px;
-    background-color: #3498db;
-    border: none;
-    border-radius: 5px;
-    color: #fff;
-    font-size: 1rem;
-    cursor: pointer;
+    background-color: #5cb85c;
 }
 
 #login-button:hover {
-    background-color: #2980b9;
+    background-color: #4cae4c;
 }
 
-/* Click Counter */
-.click-counter h3 {
-    font-size: 1.25rem;
-    color: #2a2a2a;
-}
-
-#clicks {
-    font-size: 1.5rem;
-    color: #2ecc71;
-    font-weight: bold;
-}
-
-/* Rock Button */
-.rock-container {
+/* Leaderboard styles */
+h2 {
     margin-top: 20px;
-}
-
-#rock {
-    padding: 15px 30px;
-    font-size: 1.25rem;
-    background-color: #f39c12;
-    border: none;
-    border-radius: 5px;
-    color: #fff;
-    cursor: pointer;
-}
-
-#rock:hover {
-    background-color: #e67e22;
-}
-
-/* Leaderboard */
-.leaderboard-container {
-    margin-top: 30px;
-    text-align: left;
+    font-size: 24px;
+    color: #333;
 }
 
 #leaderboard {
-    list-style-type: none;
+    list-style: none;
     padding: 0;
+    width: 100%;
+    max-width: 400px;
 }
 
 #leaderboard li {
-    font-size: 1rem;
+    padding: 10px;
     margin: 5px 0;
-    color: #555;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
 }
