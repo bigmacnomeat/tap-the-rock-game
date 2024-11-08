@@ -1,56 +1,38 @@
-/* Styles for the entire page */
-body {
-    margin: 0;
-    padding: 0;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-}
-
+/* General Game Styling */
 #game-container {
     text-align: center;
-    font-family: Arial, sans-serif;
+    margin-top: 50px;
 }
 
-/* Position the countdown timer in the top right of the viewport */
+/* Countdown timer at the top-right of the page */
 #countdown-timer {
-    position: fixed; /* Fixed relative to the viewport */
-    top: 20px;  /* Distance from the top of the viewport */
-    right: 20px; /* Distance from the right side of the viewport */
+    position: fixed; /* Position relative to the viewport */
+    top: 20px;       /* Distance from the top of the page */
+    right: 20px;     /* Distance from the right edge */
     font-size: 24px;
-    color: #ff9800;
+    color: #ff9800;   /* Text color */
     font-weight: bold;
     text-align: center;
-    z-index: 1000; /* Make sure it's on top */
+    z-index: 1000;    /* Ensure it's on top */
 }
 
-/* Style for the timer text */
+/* Style the countdown timer */
 #timer {
     font-size: 30px;
     color: #4caf50;
 }
 
-/* Additional styles for leaderboard and other elements */
-#leaderboard {
-    margin-top: 30px;
-    padding: 10px;
-    border: 2px solid #ddd;
-    border-radius: 10px;
-    background-color: #f7f7f7;
-}
-
-#leaderboard-list {
-    font-size: 18px;
-}
-
+/* Styling for the rest of the page */
 button {
     margin: 10px;
-    padding: 10px 20px;
+    padding: 10px;
+    background-color: #4caf50;
+    color: white;
+    border: none;
     font-size: 16px;
     cursor: pointer;
 }
 
-h2 {
-    font-size: 28px;
-    margin-bottom: 10px;
+button:hover {
+    background-color: #45a049;
 }
