@@ -18,6 +18,7 @@ const db = getFirestore(app);
 
 // Variables for tracking clicks
 let clickCount = 0;
+let userPublicKey = null;
 
 // Function to connect Phantom Wallet and store data in Firestore
 async function connectPhantom() {
@@ -25,6 +26,7 @@ async function connectPhantom() {
         try {
             await window.solana.connect();
             const publicKey = window.solana.publicKey.toString(); // Get the wallet address
+            userPublicKey = publicKey;  // Save the public key
             console.log("Connected with public key:", publicKey);
             document.getElementById("message").innerText = `Connected with Phantom wallet: ${publicKey}`;
 
@@ -59,17 +61,21 @@ async function connectPhantom() {
 
 // Function to update clicks in Firestore
 async function updateClicks() {
-    // Increment click count
-    clickCount++;
-    document.getElementById("clicks").innerText = `Clicks: ${clickCount}`;
+    if (userPublicKey) {
+        // Increment click count
+        clickCount++;
+        document.getElementById("clicks").innerText = `Clicks: ${clickCount}`;
 
-    // Update the user's click count in Firestore
-    try {
-        await setDoc(doc(db, "leaderboard", window.solana.publicKey.toString()), {
-            clicks: clickCount
-        }, { merge: true }); // Merge to update only the clicks field
-    } catch (err) {
-        console.error("Error updating clicks in Firestore:", err);
+        // Update the user's click count in Firestore
+        try {
+            await setDoc(doc(db, "leaderboard", userPublicKey), {
+                clicks: clickCount
+            }, { merge: true }); // Merge to update only the clicks field
+        } catch (err) {
+            console.error("Error updating clicks in Firestore:", err);
+        }
+    } else {
+        alert("Please connect your wallet first.");
     }
 }
 
@@ -110,4 +116,20 @@ document.getElementById("rock").addEventListener("click", updateClicks);
 document.getElementById("login-button").addEventListener("click", connectPhantom);
 
 // Fetch and display leaderboard on page load
-window.onload = fetchLeaderboard;
+window.onload = async () => {
+    // Check if user is already connected (via localStorage or something else)
+    if (window.solana && window.solana.isPhantom) {
+        const publicKey = await window.solana.connect();
+        userPublicKey = publicKey.publicKey.toString();
+
+        // Fetch and display clicks for the connected wallet
+        const userDoc = await getDoc(doc(db, "leaderboard", userPublicKey));
+        if (userDoc.exists()) {
+            clickCount = userDoc.data().clicks; // Load stored click count
+            document.getElementById("clicks").innerText = `Clicks: ${clickCount}`;
+        }
+
+        // Fetch leaderboard after page reload
+        fetchLeaderboard();
+    }
+};
