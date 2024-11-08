@@ -1,6 +1,6 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-import { getFirestore, doc, setDoc, getDocs, collection } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+import { getFirestore, doc, setDoc, getDoc, getDocs, collection } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
 // Firebase configuration for your project
 const firebaseConfig = {
@@ -28,11 +28,21 @@ async function connectPhantom() {
             console.log("Connected with public key:", publicKey);
             document.getElementById("message").innerText = `Connected with Phantom wallet: ${publicKey}`;
 
-            // Add document to Firestore (leaderboard collection)
-            await setDoc(doc(db, "leaderboard", publicKey), {
-                walletAddress: publicKey, // Use the wallet address as the document ID
-                clicks: clickCount // Initialize clicks to 0
-            });
+            // Fetch the current click count for this wallet from Firestore (if it exists)
+            const userDoc = await getDoc(doc(db, "leaderboard", publicKey));
+            if (userDoc.exists()) {
+                clickCount = userDoc.data().clicks; // Update click count with the value from Firestore
+                document.getElementById("clicks").innerText = `Clicks: ${clickCount}`;
+            } else {
+                // If no document exists, set initial click count to 0
+                clickCount = 0;
+                document.getElementById("clicks").innerText = `Clicks: ${clickCount}`;
+                // Add a new document for this wallet with initial click count
+                await setDoc(doc(db, "leaderboard", publicKey), {
+                    walletAddress: publicKey,
+                    clicks: clickCount
+                });
+            }
 
             // Hide the login button once connected
             document.getElementById("login-button").style.display = "none";
