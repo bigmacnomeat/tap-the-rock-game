@@ -1,16 +1,15 @@
-// Import the functions you need from the SDKs you need
+// Import the functions you need from Firebase SDK
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
 import { getFirestore, doc, setDoc, getDoc, getDocs, collection } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
-// Your web app's Firebase configuration
+// Firebase configuration for your project
 const firebaseConfig = {
     apiKey: "AIzaSyDscMKsp0HDin4CaNNjGL-XJ_LhWIUUTGE",
     authDomain: "miners-f274c.firebaseapp.com",
     projectId: "miners-f274c",
     storageBucket: "miners-f274c.firebasestorage.app",
     messagingSenderId: "327650804954",
-    appId: "1:327650804954:web:97225d969e840338e991e3",
-    measurementId: "G-4RFD09Z0NT"
+    appId: "1:327650804954:web:97225d969e840338e991e3"
 };
 
 // Initialize Firebase
@@ -19,38 +18,6 @@ const db = getFirestore(app);
 
 // Variables for tracking clicks
 let clickCount = 0;
-
-// Function to format time as HH:MM:SS
-function formatTime(ms) {
-    const days = Math.floor(ms / (1000 * 60 * 60 * 24));
-    const hours = Math.floor((ms % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-    const minutes = Math.floor((ms % (1000 * 60 * 60)) / (1000 * 60));
-    const seconds = Math.floor((ms % (1000 * 60)) / 1000);
-    return `${days}d ${hours}h ${minutes}m ${seconds}s`;
-}
-
-// Function to update the countdown timer
-async function updateCountdown() {
-    // Get target time from Firestore
-    const docRef = doc(db, "settings", "mining");
-    const docSnap = await getDoc(docRef);
-
-    if (docSnap.exists()) {
-        const targetTime = docSnap.data().targetTime;
-        const now = new Date().getTime();
-        const timeRemaining = targetTime - now;
-
-        if (timeRemaining <= 0) {
-            document.getElementById("timer").innerText = "Mining Drop Available Now!";
-            clearInterval(countdownInterval); // Stop the countdown
-        } else {
-            document.getElementById("timer").innerText = formatTime(timeRemaining);
-        }
-    }
-}
-
-// Update the countdown every second
-const countdownInterval = setInterval(updateCountdown, 1000);
 
 // Function to connect Phantom Wallet and store data in Firestore
 async function connectPhantom() {
@@ -61,25 +28,27 @@ async function connectPhantom() {
             console.log("Connected with public key:", publicKey);
             document.getElementById("message").innerText = `Connected with Phantom wallet: ${publicKey}`;
 
-            // Check if user document exists in Firestore, if not create it
-            const userDocRef = doc(db, "leaderboard", publicKey);
-            const userDocSnap = await getDoc(userDocRef);
-
-            if (!userDocSnap.exists()) {
-                // Create a new document with initial click count as 0
-                await setDoc(userDocRef, {
+            // Fetch the current click count for this wallet from Firestore (if it exists)
+            const userDoc = await getDoc(doc(db, "leaderboard", publicKey));
+            if (userDoc.exists()) {
+                clickCount = userDoc.data().clicks; // Update click count with the value from Firestore
+                document.getElementById("clicks").innerText = `Clicks: ${clickCount}`;
+            } else {
+                // If no document exists, set initial click count to 0
+                clickCount = 0;
+                document.getElementById("clicks").innerText = `Clicks: ${clickCount}`;
+                // Add a new document for this wallet with initial click count
+                await setDoc(doc(db, "leaderboard", publicKey), {
                     walletAddress: publicKey,
-                    clicks: 0
+                    clicks: clickCount
                 });
             }
 
-            // Load user's click count
-            const userDoc = await getDoc(userDocRef);
-            clickCount = userDoc.data().clicks;
-            document.getElementById("clicks").innerText = `Clicks: ${clickCount}`;
+            // Hide the login button once connected
+            document.getElementById("login-button").style.display = "none";
 
-            document.getElementById("login-button").style.display = "none"; // Hide the login button once connected
-
+            // Fetch and display leaderboard after login
+            fetchLeaderboard();
         } catch (err) {
             console.error("Failed to connect:", err);
         }
@@ -104,28 +73,41 @@ async function updateClicks() {
     }
 }
 
-// Function to load leaderboard from Firestore
-async function loadLeaderboard() {
+// Function to fetch and display the leaderboard from Firestore
+async function fetchLeaderboard() {
     try {
         const querySnapshot = await getDocs(collection(db, "leaderboard"));
-        const leaderboardList = document.getElementById("leaderboard-list");
-        leaderboardList.innerHTML = ""; // Clear the leaderboard
+        const leaderboard = [];
 
-        querySnapshot.forEach(doc => {
+        querySnapshot.forEach((doc) => {
             const data = doc.data();
-            const listItem = document.createElement("div");
-            listItem.innerText = `${data.walletAddress}: ${data.clicks} clicks`;
-            leaderboardList.appendChild(listItem);
+            leaderboard.push({
+                walletAddress: data.walletAddress,
+                clicks: data.clicks
+            });
         });
-    } catch (err) {
-        console.error("Error loading leaderboard:", err);
+
+        // Sort leaderboard by clicks (highest first)
+        leaderboard.sort((a, b) => b.clicks - a.clicks);
+
+        // Display leaderboard on the page
+        const leaderboardElement = document.getElementById("leaderboard");
+        leaderboardElement.innerHTML = ''; // Clear any previous data
+        leaderboard.forEach((user, index) => {
+            const listItem = document.createElement("li");
+            listItem.innerText = `${index + 1}. Wallet: ${user.walletAddress} - Clicks: ${user.clicks}`;
+            leaderboardElement.appendChild(listItem);
+        });
+    } catch (error) {
+        console.error("Error fetching leaderboard data:", error);
     }
 }
 
 // Event listener for the rock click
 document.getElementById("rock").addEventListener("click", updateClicks);
+
 // Event listener for the login button
 document.getElementById("login-button").addEventListener("click", connectPhantom);
 
-// Load leaderboard when the page is loaded
-loadLeaderboard();
+// Fetch and display leaderboard on page load
+window.onload = fetchLeaderboard;
