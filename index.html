@@ -3,20 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tap the Rock Game</title>
+    <title>Countdown Game</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div id="message"></div>
-    <div id="countdown-display">Countdown: Loading...</div> <!-- Countdown display -->
+    <h1>Welcome to Tap-the-Rock Game</h1>
+    
+    <!-- Countdown display -->
+    <div id="countdown">Loading countdown...</div>
+    
+    <!-- Display click count -->
     <div id="clicks">Clicks: 0</div>
+    
+    <!-- Button to connect Phantom Wallet -->
     <button id="login-button">Connect Phantom Wallet</button>
-    <button id="rock">Tap the Rock</button>
     
-    <h2>Leaderboard</h2>
+    <!-- Leaderboard -->
     <ul id="leaderboard"></ul>
-    
-    <!-- Link to JavaScript file -->
+
+    <!-- JavaScript -->
     <script type="module" src="script.js"></script>
 </body>
 </html>
