@@ -1,4 +1,5 @@
 // Import Firebase functions
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
 import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
 // Firebase initialization code (same as before)
@@ -47,4 +48,3 @@ async function fetchLeaderboard() {
 
 // Call the function to fetch and display leaderboard on page load
 window.onload = fetchLeaderboard;
-
