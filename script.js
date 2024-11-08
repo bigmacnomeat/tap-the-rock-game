@@ -1,58 +1,60 @@
+// Import the functions you need from the Firebase SDK
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-analytics.js";
+import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js"; // Import Firestore SDK
 
-// Firebase configuration
+// Your web app's Firebase configuration
 const firebaseConfig = {
-    apiKey: "your_api_key",
-    authDomain: "your_project_id.firebaseapp.com",
-    projectId: "your_project_id",
-    storageBucket: "your_project_id.appspot.com",
-    messagingSenderId: "your_sender_id",
-    appId: "your_app_id"
+  apiKey: "AIzaSyDscMKsp0HDin4CaNNjGL-XJ_LhWIUUTGE",
+  authDomain: "miners-f274c.firebaseapp.com",
+  projectId: "miners-f274c",
+  storageBucket: "miners-f274c.firebasestorage.app",
+  messagingSenderId: "327650804954",
+  appId: "1:327650804954:web:97225d969e840338e991e3",
+  measurementId: "G-4RFD09Z0NT"
 };
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+const analytics = getAnalytics(app);
+const db = getFirestore(app); // Initialize Firestore
 
-let interval; // Declare interval variable
+// Reference to the countdown document in Firestore
+const countdownRef = doc(db, "countdowns", "global-countdown");
+
+// Function to load the countdown data from Firestore
+async function loadCountdown() {
+  try {
+    const docSnap = await getDoc(countdownRef);
+    if (docSnap.exists()) {
+      const endTime = docSnap.data().endTime.toDate(); // Convert Firestore timestamp to Date
+      startCountdown(endTime);
+    } else {
+      document.getElementById("countdown").innerText = "No countdown data found in Firestore.";
+    }
+  } catch (error) {
+    console.error("Error loading countdown: ", error);
+    document.getElementById("countdown").innerText = "Error loading countdown.";
+  }
+}
 
 // Function to start the countdown
-async function startCountdown() {
-    try {
-        const docRef = doc(db, "countdowns", "global-countdown");
-        const docSnap = await getDoc(docRef);
+function startCountdown(endTime) {
+  const countdownElement = document.getElementById("countdown");
+  const interval = setInterval(() => {
+    const now = new Date();
+    const timeRemaining = endTime - now;
 
-        if (docSnap.exists()) {
-            const endTime = docSnap.data().timestamp.toDate(); // Assuming Firestore timestamp format
-            interval = setInterval(() => updateCountdown(endTime), 1000); // Update every second
-        } else {
-            document.getElementById("countdown").innerText = "Countdown data not found.";
-        }
-    } catch (error) {
-        console.error("Error loading countdown:", error);
-        document.getElementById("countdown").innerText = "Error loading countdown.";
+    if (timeRemaining <= 0) {
+      clearInterval(interval); // Stop the countdown when it reaches zero
+      countdownElement.innerText = "Countdown Finished!";
+    } else {
+      const minutes = Math.floor(timeRemaining / 1000 / 60);
+      const seconds = Math.floor((timeRemaining / 1000) % 60);
+      countdownElement.innerText = `Time remaining: ${minutes}m ${seconds}s`;
     }
+  }, 1000);
 }
 
-// Function to update countdown
-function updateCountdown(endTime) {
-    const now = new Date().getTime();
-    const distance = endTime - now;
-
-    if (distance < 0) {
-        clearInterval(interval);
-        document.getElementById("countdown").innerText = "Countdown finished!";
-        return;
-    }
-
-    const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-    const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-    const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-    document.getElementById("countdown").innerText = `${days}d ${hours}h ${minutes}m ${seconds}s`;
-}
-
-// Start countdown on page load
-window.onload = startCountdown;
+// Load the countdown data
+loadCountdown();
