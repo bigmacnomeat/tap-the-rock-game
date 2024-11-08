@@ -17,10 +17,11 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 // Variables for tracking clicks
-let clickCount = 0;
+let clickCount = localStorage.getItem('clickCount') ? parseInt(localStorage.getItem('clickCount')) : 0;
 
 // Target time (46 days and 5 hours from now)
-const targetTime = new Date().getTime() + (46 * 24 * 60 * 60 * 1000) + (5 * 60 * 60 * 1000); // 46 days and 5 hours from current time
+// Check if a stored target time exists, otherwise calculate it
+const targetTime = localStorage.getItem('targetTime') ? parseInt(localStorage.getItem('targetTime')) : (new Date().getTime() + (46 * 24 * 60 * 60 * 1000) + (5 * 60 * 60 * 1000));
 
 // Function to format time as HH:MM:SS
 function formatTime(ms) {
@@ -72,10 +73,11 @@ async function connectPhantom() {
     }
 }
 
-// Function to update clicks in Firestore
+// Function to update clicks in Firestore and localStorage
 async function updateClicks() {
     // Increment click count
     clickCount++;
+    localStorage.setItem('clickCount', clickCount); // Store the updated click count in localStorage
     document.getElementById("clicks").innerText = `Clicks: ${clickCount}`;
 
     // Update the user's click count in Firestore
