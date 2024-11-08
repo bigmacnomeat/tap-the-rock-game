@@ -3,30 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tap-to-Play Game</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Leaderboard Example</title>
 </head>
 <body>
-    <div id="game-container">
-        <h1>Tap the Rock!</h1>
-        <div id="message">Click to connect your wallet and start playing!</div>
-        <div id="clicks">Clicks: 0</div>
-        <button id="login-button">Connect Phantom Wallet</button>
-        <button id="rock">Tap Rock!</button>
+    <div id="message">Please log in to Phantom Wallet</div>
+    <button id="login-button">Login with Phantom</button>
+    <div>
+        <p id="clicks">Clicks: 0</p>
+        <div id="rock" style="width:100px; height:100px; background-color: gray; cursor: pointer;">Tap Me</div>
     </div>
 
-    <!-- Leaderboard Section -->
-    <div id="leaderboard-container">
-        <h2>Leaderboard</h2>
-        <ul id="leaderboard">
-            <!-- Leaderboard will be populated here -->
-        </ul>
-    </div>
+    <h2>Leaderboard</h2>
+    <ul id="leaderboard">
+        <!-- Leaderboard items will be added here -->
+    </ul>
 
-    <!-- Solana Web3.js Library -->
-    <script src="https://unpkg.com/@solana/web3.js@1.73.0/lib/index.iife.min.js"></script>
-
-    <!-- Firebase SDK -->
-    <script type="module" src="script.js"></script>
+    <script src="your_script.js"></script> <!-- Link to the updated script -->
 </body>
 </html>
