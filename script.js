@@ -1,6 +1,6 @@
-// Import necessary Firebase Firestore methods
+// Import the functions you need from the SDKs you need
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-import { getFirestore, doc, setDoc, getDocs, collection } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+import { getFirestore, doc, setDoc, getDoc, getDocs, collection } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
 // Firebase configuration for your project
 const firebaseConfig = {
@@ -14,7 +14,7 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);  // Initialize Firestore
+const db = getFirestore(app);
 
 // Variables for tracking clicks
 let clickCount = 0;
@@ -79,7 +79,6 @@ async function fetchLeaderboard() {
         const querySnapshot = await getDocs(collection(db, "leaderboard"));
         const leaderboard = [];
 
-        // Collect all the leaderboard data
         querySnapshot.forEach((doc) => {
             const data = doc.data();
             leaderboard.push({
@@ -93,9 +92,7 @@ async function fetchLeaderboard() {
 
         // Display leaderboard on the page
         const leaderboardElement = document.getElementById("leaderboard");
-        leaderboardElement.innerHTML = ''; // Clear previous leaderboard
-
-        // Display the leaderboard as a list
+        leaderboardElement.innerHTML = ''; // Clear any previous data
         leaderboard.forEach((user, index) => {
             const listItem = document.createElement("li");
             listItem.innerText = `${index + 1}. Wallet: ${user.walletAddress} - Clicks: ${user.clicks}`;
