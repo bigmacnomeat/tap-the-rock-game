@@ -1,23 +1,36 @@
+/* Styles for the entire page */
+body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
 #game-container {
     text-align: center;
     font-family: Arial, sans-serif;
 }
 
+/* Position the countdown timer in the top right of the viewport */
 #countdown-timer {
-    position: fixed; /* Fixed position to the viewport */
+    position: fixed; /* Fixed relative to the viewport */
     top: 20px;  /* Distance from the top of the viewport */
     right: 20px; /* Distance from the right side of the viewport */
     font-size: 24px;
     color: #ff9800;
     font-weight: bold;
     text-align: center;
+    z-index: 1000; /* Make sure it's on top */
 }
 
+/* Style for the timer text */
 #timer {
     font-size: 30px;
     color: #4caf50;
 }
 
+/* Additional styles for leaderboard and other elements */
 #leaderboard {
     margin-top: 30px;
     padding: 10px;
