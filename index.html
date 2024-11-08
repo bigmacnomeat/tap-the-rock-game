@@ -3,22 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tap-the-Rock Game</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Tap-to-Play Game</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>Welcome to Tap-the-Rock Game</h1>
+    <div id="game-container">
+        <h1>Tap the Rock!</h1>
+        <div id="message">Click to connect your wallet and start playing!</div>
+        <div id="clicks">Clicks: 0</div>
+        <button id="login-button">Connect Phantom Wallet</button>
+        <button id="rock">Tap Rock!</button>
+    </div>
 
-    <!-- Display click count -->
-    <div id="clicks">Clicks: 0</div>
+    <!-- Leaderboard Section -->
+    <div id="leaderboard-container">
+        <h2>Leaderboard</h2>
+        <ul id="leaderboard">
+            <!-- Leaderboard will be populated here -->
+        </ul>
+    </div>
 
-    <!-- Button to connect Phantom Wallet -->
-    <button id="login-button">Connect Phantom Wallet</button>
+    <!-- Solana Web3.js Library -->
+    <script src="https://unpkg.com/@solana/web3.js@1.73.0/lib/index.iife.min.js"></script>
 
-    <!-- Leaderboard -->
-    <ul id="leaderboard"></ul>
-
-    <!-- JavaScript -->
+    <!-- Firebase SDK -->
     <script type="module" src="script.js"></script>
 </body>
 </html>
