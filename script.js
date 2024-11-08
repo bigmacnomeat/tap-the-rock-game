@@ -1,64 +1,51 @@
-// Import Firebase functions
+// Firebase imports and setup
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
 import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
-// Firebase configuration
 const firebaseConfig = {
-    apiKey: "AIzaSyDscMKsp0HDin4CaNNjGL-XJ_LhWIUUTGE",
-    authDomain: "miners-f274c.firebaseapp.com",
-    projectId: "miners-f274c",
-    storageBucket: "miners-f274c.firebasestorage.app",
-    messagingSenderId: "327650804954",
-    appId: "1:327650804954:web:97225d969e840338e991e3"
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_AUTH_DOMAIN",
+    projectId: "YOUR_PROJECT_ID",
+    storageBucket: "YOUR_STORAGE_BUCKET",
+    messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+    appId: "YOUR_APP_ID"
 };
 
-// Initialize Firebase and Firestore
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// Function to fetch countdown from Firestore
-async function fetchCountdown() {
-    try {
-        const countdownDoc = await getDoc(doc(db, "countdowns", "global-countdown"));
-        if (countdownDoc.exists()) {
-            const endTime = countdownDoc.data().endTime;
-            if (endTime) {
-                startCountdown(endTime);
+// Function to retrieve and display the countdown
+async function displayCountdown() {
+    const countdownDocRef = doc(db, "countdowns", "global-countdown");
+    const countdownDoc = await getDoc(countdownDocRef);
+
+    if (countdownDoc.exists()) {
+        const endTime = countdownDoc.data().endTime.toDate(); // Convert Firestore Timestamp to JavaScript Date
+
+        const updateCountdown = () => {
+            const now = new Date();
+            const timeRemaining = endTime - now;
+
+            if (timeRemaining > 0) {
+                const days = Math.floor(timeRemaining / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((timeRemaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((timeRemaining % (1000 * 60)) / 1000);
+
+                document.getElementById("countdown").innerText = `${days}d ${hours}h ${minutes}m ${seconds}s`;
             } else {
-                console.error("No endTime field found in Firestore.");
-                document.getElementById("countdown").innerText = "No countdown available.";
+                document.getElementById("countdown").innerText = "Countdown Ended";
+                clearInterval(countdownInterval);
             }
-        } else {
-            console.error("No countdown data found.");
-            document.getElementById("countdown").innerText = "No countdown data found.";
-        }
-    } catch (error) {
-        console.error("Error fetching countdown data:", error);
-        document.getElementById("countdown").innerText = "Failed to load countdown.";
+        };
+
+        updateCountdown(); // Initial call to display immediately
+        const countdownInterval = setInterval(updateCountdown, 1000); // Update every second
+    } else {
+        console.error("No countdown data found.");
+        document.getElementById("countdown").innerText = "Countdown data not available.";
     }
 }
 
-// Function to start the countdown
-function startCountdown(endTime) {
-    function updateCountdown() {
-        const now = Date.now();
-        const remainingTime = endTime - now;
-
-        if (remainingTime <= 0) {
-            document.getElementById("countdown").innerText = "Countdown completed!";
-            clearInterval(interval);
-            return;
-        }
-
-        const hours = Math.floor((remainingTime / (1000 * 60 * 60)) % 24);
-        const minutes = Math.floor((remainingTime / (1000 * 60)) % 60);
-        const seconds = Math.floor((remainingTime / 1000) % 60);
-        document.getElementById("countdown").innerText = `Time left: ${hours}h ${minutes}m ${seconds}s`;
-    }
-
-    updateCountdown();
-    const interval = setInterval(updateCountdown, 1000);
-}
-
-// Fetch countdown on page load
-window.onload = fetchCountdown;
+// Call the function to display the countdown
+displayCountdown();
