@@ -1,76 +1,39 @@
-/* General styles */
 body {
     font-family: Arial, sans-serif;
+    text-align: center;
     background-color: #f5f5f5;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 20px;
+}
+
+h1 {
     color: #333;
 }
 
-/* Container for messages and stats */
-#message, #clicks, #countdown-display {
-    font-size: 18px;
-    margin: 10px 0;
-    padding: 10px;
-    background-color: #fff;
-    border-radius: 8px;
-    width: 100%;
-    max-width: 400px;
-    text-align: center;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-/* Countdown display styles */
-#countdown-display {
+#countdown {
+    font-size: 24px;
     font-weight: bold;
-    color: #d9534f; /* Red color for emphasis */
+    margin: 20px 0;
+    color: #ff4500;
 }
 
-/* Button styles */
-button {
-    padding: 10px 20px;
-    margin: 10px;
-    font-size: 16px;
-    color: #fff;
-    background-color: #007bff;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
-
-button:hover {
-    background-color: #0056b3;
+#clicks {
+    font-size: 20px;
+    margin: 20px 0;
 }
 
 #login-button {
-    background-color: #5cb85c;
-}
-
-#login-button:hover {
-    background-color: #4cae4c;
-}
-
-/* Leaderboard styles */
-h2 {
-    margin-top: 20px;
-    font-size: 24px;
-    color: #333;
+    font-size: 16px;
+    padding: 10px 20px;
+    cursor: pointer;
+    margin-top: 10px;
 }
 
 #leaderboard {
-    list-style: none;
+    list-style-type: none;
     padding: 0;
-    width: 100%;
-    max-width: 400px;
+    margin: 20px 0;
 }
 
 #leaderboard li {
-    padding: 10px;
-    margin: 5px 0;
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+    font-size: 18px;
+    color: #555;
 }
