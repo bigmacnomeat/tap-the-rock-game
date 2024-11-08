@@ -87,57 +87,10 @@ async function fetchLeaderboard() {
     }
 }
 
-// Fetch countdown from Firestore
-async function fetchCountdown() {
-    try {
-        const countdownRef = doc(db, "countdowns", "global-countdown");
-        const countdownDoc = await getDoc(countdownRef);
-
-        if (countdownDoc.exists()) {
-            const endTimestamp = countdownDoc.data().endTimestamp;
-
-            if (endTimestamp) {
-                startCountdown(endTimestamp);
-            } else {
-                console.error("No endTimestamp field found in countdown document.");
-                document.getElementById("countdown").innerText = "Countdown not available";
-            }
-        } else {
-            console.error("No countdown data found.");
-            document.getElementById("countdown").innerText = "Countdown not available";
-        }
-    } catch (error) {
-        console.error("Error fetching countdown:", error);
-        document.getElementById("countdown").innerText = "Error loading countdown";
-    }
-}
-
-// Start the countdown display
-function startCountdown(endTimestamp) {
-    const countdownElement = document.getElementById("countdown");
-
-    const interval = setInterval(() => {
-        const now = new Date().getTime();
-        const distance = endTimestamp - now;
-
-        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-        countdownElement.innerText = `${days}d ${hours}h ${minutes}m ${seconds}s`;
-
-        if (distance < 0) {
-            clearInterval(interval);
-            countdownElement.innerText = "Countdown ended";
-        }
-    }, 1000);
-}
-
 // Event listeners
 document.getElementById("login-button").addEventListener("click", connectPhantom);
 document.getElementById("rock").addEventListener("click", updateClicks);
 
 window.onload = () => {
-    fetchCountdown();
+    fetchLeaderboard();
 };
