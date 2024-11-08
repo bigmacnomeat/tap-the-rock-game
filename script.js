@@ -1,15 +1,16 @@
-// Firebase setup
+// Import the functions you need from the SDKs you need
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-import { getFirestore, doc, setDoc, getDocs, collection } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+import { getFirestore, doc, setDoc, getDoc, getDocs, collection } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
-// Firebase configuration for your project
+// Your web app's Firebase configuration
 const firebaseConfig = {
     apiKey: "AIzaSyDscMKsp0HDin4CaNNjGL-XJ_LhWIUUTGE",
     authDomain: "miners-f274c.firebaseapp.com",
     projectId: "miners-f274c",
     storageBucket: "miners-f274c.firebasestorage.app",
     messagingSenderId: "327650804954",
-    appId: "1:327650804954:web:97225d969e840338e991e3"
+    appId: "1:327650804954:web:97225d969e840338e991e3",
+    measurementId: "G-4RFD09Z0NT"
 };
 
 // Initialize Firebase
@@ -17,11 +18,7 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 // Variables for tracking clicks
-let clickCount = localStorage.getItem('clickCount') ? parseInt(localStorage.getItem('clickCount')) : 0;
-
-// Target time (46 days and 5 hours from now)
-// Check if a stored target time exists, otherwise calculate it
-const targetTime = localStorage.getItem('targetTime') ? parseInt(localStorage.getItem('targetTime')) : (new Date().getTime() + (46 * 24 * 60 * 60 * 1000) + (5 * 60 * 60 * 1000));
+let clickCount = 0;
 
 // Function to format time as HH:MM:SS
 function formatTime(ms) {
@@ -33,15 +30,22 @@ function formatTime(ms) {
 }
 
 // Function to update the countdown timer
-function updateCountdown() {
-    const now = new Date().getTime();
-    const timeRemaining = targetTime - now;
+async function updateCountdown() {
+    // Get target time from Firestore
+    const docRef = doc(db, "settings", "mining");
+    const docSnap = await getDoc(docRef);
 
-    if (timeRemaining <= 0) {
-        document.getElementById("timer").innerText = "Mining Drop Available Now!";
-        clearInterval(countdownInterval); // Stop the countdown
-    } else {
-        document.getElementById("timer").innerText = formatTime(timeRemaining);
+    if (docSnap.exists()) {
+        const targetTime = docSnap.data().targetTime;
+        const now = new Date().getTime();
+        const timeRemaining = targetTime - now;
+
+        if (timeRemaining <= 0) {
+            document.getElementById("timer").innerText = "Mining Drop Available Now!";
+            clearInterval(countdownInterval); // Stop the countdown
+        } else {
+            document.getElementById("timer").innerText = formatTime(timeRemaining);
+        }
     }
 }
 
@@ -56,12 +60,23 @@ async function connectPhantom() {
             const publicKey = window.solana.publicKey.toString(); // Get the wallet address
             console.log("Connected with public key:", publicKey);
             document.getElementById("message").innerText = `Connected with Phantom wallet: ${publicKey}`;
-            
-            // Add document to Firestore (leaderboard collection)
-            await setDoc(doc(db, "leaderboard", publicKey), {
-                walletAddress: publicKey, // Use the wallet address as the document ID
-                clicks: clickCount // Initialize clicks to 0
-            });
+
+            // Check if user document exists in Firestore, if not create it
+            const userDocRef = doc(db, "leaderboard", publicKey);
+            const userDocSnap = await getDoc(userDocRef);
+
+            if (!userDocSnap.exists()) {
+                // Create a new document with initial click count as 0
+                await setDoc(userDocRef, {
+                    walletAddress: publicKey,
+                    clicks: 0
+                });
+            }
+
+            // Load user's click count
+            const userDoc = await getDoc(userDocRef);
+            clickCount = userDoc.data().clicks;
+            document.getElementById("clicks").innerText = `Clicks: ${clickCount}`;
 
             document.getElementById("login-button").style.display = "none"; // Hide the login button once connected
 
@@ -73,11 +88,10 @@ async function connectPhantom() {
     }
 }
 
-// Function to update clicks in Firestore and localStorage
+// Function to update clicks in Firestore
 async function updateClicks() {
     // Increment click count
     clickCount++;
-    localStorage.setItem('clickCount', clickCount); // Store the updated click count in localStorage
     document.getElementById("clicks").innerText = `Clicks: ${clickCount}`;
 
     // Update the user's click count in Firestore
