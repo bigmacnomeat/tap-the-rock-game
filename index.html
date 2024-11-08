@@ -3,45 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tap to Play</title>
+    <title>Tap the Rock Game</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="container">
-        <!-- Header Section -->
-        <h1>Tap to Play</h1>
-
-        <!-- Countdown Timer -->
-        <div class="countdown-container">
-            <h2>Countdown</h2>
-            <p id="countdown">Loading...</p>
-        </div>
-
-        <!-- Wallet Connection -->
-        <div class="wallet-connection">
-            <p id="message">Please connect your Phantom wallet</p>
-            <button id="login-button">Connect Phantom Wallet</button>
-        </div>
-
-        <!-- Click Counter -->
-        <div class="click-counter">
-            <h3>Click Counter</h3>
-            <p id="clicks">Clicks: 0</p>
-        </div>
-
-        <!-- Rock Button to click -->
-        <div class="rock-container">
-            <button id="rock">Tap the Rock</button>
-        </div>
-
-        <!-- Leaderboard Section -->
-        <div class="leaderboard-container">
-            <h2>Leaderboard</h2>
-            <ul id="leaderboard"></ul>
-        </div>
-    </div>
-
-    <!-- Include the Firebase and custom JavaScript -->
-    <script type="module" src="app.js"></script>
+    <div id="message"></div>
+    <div id="countdown-display">Countdown: Loading...</div> <!-- Countdown display -->
+    <div id="clicks">Clicks: 0</div>
+    <button id="login-button">Connect Phantom Wallet</button>
+    <button id="rock">Tap the Rock</button>
+    
+    <h2>Leaderboard</h2>
+    <ul id="leaderboard"></ul>
+    
+    <!-- Link to JavaScript file -->
+    <script type="module" src="script.js"></script>
 </body>
 </html>
