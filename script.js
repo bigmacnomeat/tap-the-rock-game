@@ -19,6 +19,7 @@ const db = getFirestore(app);
 // Variables for tracking clicks
 let clickCount = 0;
 let userPublicKey = null;
+let endTime = null;
 
 // Function to connect Phantom Wallet and store data in Firestore
 async function connectPhantom() {
@@ -45,6 +46,9 @@ async function connectPhantom() {
                     clicks: clickCount
                 });
             }
+
+            // Fetch the global end time for the countdown
+            fetchEndTime();
 
             // Hide the login button once connected
             document.getElementById("login-button").style.display = "none";
@@ -109,13 +113,57 @@ async function fetchLeaderboard() {
     }
 }
 
+// Function to fetch the global end time for the countdown from Firestore
+async function fetchEndTime() {
+    try {
+        const docRef = doc(db, "countdowns", "global-countdown");  // Your Firestore document for the countdown
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+            endTime = docSnap.data().endTime;  // Get the end time from Firestore (as a timestamp)
+            startCountdown();
+        } else {
+            console.log("No end time found in Firestore.");
+        }
+    } catch (error) {
+        console.error("Error fetching end time:", error);
+    }
+}
+
+// Function to start and update the countdown timer
+function startCountdown() {
+    const countdownElement = document.getElementById("countdown");
+
+    // Update countdown every second
+    const interval = setInterval(() => {
+        if (endTime) {
+            const now = new Date().getTime();
+            const distance = endTime - now;  // Calculate the distance between now and the end time
+
+            if (distance <= 0) {
+                clearInterval(interval);  // Stop the countdown when it reaches 0
+                countdownElement.innerHTML = "Countdown ended!";
+            } else {
+                // Calculate days, hours, minutes, and seconds remaining
+                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                // Display the result
+                countdownElement.innerHTML = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+            }
+        }
+    }, 1000);  // Update every 1000ms (1 second)
+}
+
 // Event listener for the rock click
 document.getElementById("rock").addEventListener("click", updateClicks);
 
 // Event listener for the login button
 document.getElementById("login-button").addEventListener("click", connectPhantom);
 
-// Fetch and display leaderboard on page load
+// Fetch and display leaderboard and end time on page load
 window.onload = async () => {
     // Check if user is already connected (via localStorage or something else)
     if (window.solana && window.solana.isPhantom) {
@@ -129,7 +177,8 @@ window.onload = async () => {
             document.getElementById("clicks").innerText = `Clicks: ${clickCount}`;
         }
 
-        // Fetch leaderboard after page reload
+        // Fetch leaderboard and end time after page reload
         fetchLeaderboard();
+        fetchEndTime();
     }
 };
