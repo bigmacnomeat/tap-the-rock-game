@@ -1,38 +1,43 @@
-/* General Game Styling */
-#game-container {
-    text-align: center;
-    margin-top: 50px;
+/* General styles */
+body {
+    font-family: Arial, sans-serif;
+    padding: 20px;
+    background-color: #f5f5f5;
 }
 
-/* Countdown timer at the top-right of the page */
-#countdown-timer {
-    position: fixed; /* Position relative to the viewport */
-    top: 20px;       /* Distance from the top of the page */
-    right: 20px;     /* Distance from the right edge */
-    font-size: 24px;
-    color: #ff9800;   /* Text color */
-    font-weight: bold;
-    text-align: center;
-    z-index: 1000;    /* Ensure it's on top */
+h2 {
+    font-size: 1.5rem;
 }
 
-/* Style the countdown timer */
-#timer {
-    font-size: 30px;
-    color: #4caf50;
-}
-
-/* Styling for the rest of the page */
-button {
-    margin: 10px;
-    padding: 10px;
-    background-color: #4caf50;
+#rock {
+    margin-top: 20px;
+    padding: 20px;
+    background-color: #4CAF50;
     color: white;
-    border: none;
-    font-size: 16px;
+    text-align: center;
+    font-size: 1.5rem;
     cursor: pointer;
 }
 
-button:hover {
-    background-color: #45a049;
+#clicks, #message, #login-button {
+    margin-top: 10px;
+}
+
+/* Countdown position */
+.countdown {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #ff0000;
+}
+
+/* Leaderboard styling */
+.leaderboard-section {
+    margin-top: 40px;
+}
+
+#leaderboard-list {
+    margin-top: 10px;
 }
